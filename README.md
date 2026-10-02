@@ -37,6 +37,7 @@ HoneyBoard-OffDevice-Parser/
 │  └─ model/                 # dynamic.lm과 learned.json을 넣는 곳
 └─ scripts/
    ├─ Setup-Emulator.ps1     # API 34 에뮬레이터 설치·생성·실행
+   ├─ Remove-Emulator.ps1    # 생성한 에뮬레이터 AVD 삭제
    ├─ Extract.ps1            # 기본 실행 명령
    ├─ Build-Host.ps1         # APK에서 DEX/SO를 꺼내 실행 앱 생성
    ├─ Run-Parser.ps1         # 에뮬레이터에서 모델 파싱
@@ -69,6 +70,13 @@ $env:HB_FRIDA_SERVER = 'C:\path\to\frida-server'
 다음 명령은 필요한 SDK 패키지를 설치하고 `HoneyboardParserApi34` AVD를 생성·실행한 뒤 `adb root`와 ARM64 translation을 확인합니다. 첫 설치에는 약 7–9 GB의 여유 공간이 필요하며, 이미 호환되는 에뮬레이터가 있다면 이 단계를 생략해도 됩니다.
 
 ```powershell
+.\scripts\Setup-Emulator.ps1
+```
+
+같은 AVD를 지우고 처음부터 다시 생성하려면 다음 두 명령을 실행합니다. 삭제 시 공유 Android SDK 패키지는 유지됩니다.
+
+```powershell
+.\scripts\Remove-Emulator.ps1
 .\scripts\Setup-Emulator.ps1
 ```
 
