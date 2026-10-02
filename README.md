@@ -40,6 +40,7 @@ HoneyBoard-OffDevice-Parser/
 - Android SDK `platform-tools`, `build-tools;34.0.0`, `platforms;android-34`
 - ARM64 시스템 이미지 또는 `libndk_translation.so`를 지원하는 x86_64 Android 에뮬레이터
 - 같은 버전의 Frida client와 `frida-server`
+  - `frida-server` 다운로드: [Frida 공식 Releases](https://github.com/frida/frida/releases)
   - `frida-server` 바이너리는 에뮬레이터 CPU 아키텍처와도 맞아야 합니다.
   - 특정 Frida 버전을 요구하지 않으며, 개발 시 사용한 버전은 17.4.0입니다.
 
