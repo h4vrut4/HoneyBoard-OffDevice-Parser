@@ -2,7 +2,16 @@
 
 Samsung HoneyBoard의 `dynamic.lm`과 `learned.json`을 Android 에뮬레이터에서 열어 학습 단어와 빈도를 전체 출력하는 도구입니다.
 
-> 본인이 소유하거나 분석 권한이 있는 파일에만 사용하십시오. HoneyBoard APK, Samsung 바이너리, 사용자 모델 파일과 빌드 산출물은 저장소에 포함하지 않습니다.
+> 본인이 소유하거나 분석 권한이 있는 APK와 모델 파일에만 사용하십시오.
+> 이 저장소는 HoneyBoard APK, Samsung 바이너리, 사용자 모델 파일 또는
+> 해당 파일에서 생성된 빌드 산출물을 배포하지 않습니다.
+>
+> 실행 과정에서 사용자가 제공한 HoneyBoard APK의 DEX 및 native library가
+> 로컬 빌드 산출물에 임시로 포함될 수 있습니다. 이러한 추출물과 생성된
+> APK는 재배포하지 마십시오.
+>
+> 사용자는 자신이 제공하는 소프트웨어와 데이터에 적용되는 라이선스,
+> 이용조건 및 관련 법률을 확인할 책임이 있습니다.
 
 ## 동작 방식
 
@@ -27,6 +36,7 @@ HoneyBoard-OffDevice-Parser/
 │  ├─ apk/                   # HoneyBoard.apk를 넣는 곳
 │  └─ model/                 # dynamic.lm과 learned.json을 넣는 곳
 └─ scripts/
+   ├─ Setup-Emulator.ps1     # API 34 에뮬레이터 설치·생성·실행
    ├─ Extract.ps1            # 기본 실행 명령
    ├─ Build-Host.ps1         # APK에서 DEX/SO를 꺼내 실행 앱 생성
    ├─ Run-Parser.ps1         # 에뮬레이터에서 모델 파싱
@@ -37,8 +47,7 @@ HoneyBoard-OffDevice-Parser/
 
 - Windows PowerShell 5.1 이상
 - JDK 17
-- Android SDK `platform-tools`, `build-tools;34.0.0`, `platforms;android-34`
-- ARM64 시스템 이미지 또는 `libndk_translation.so`를 지원하는 x86_64 Android 에뮬레이터
+- Android SDK Command-line Tools
 - 같은 버전의 Frida client와 `frida-server`
   - `frida-server` 다운로드: [Frida 공식 Releases](https://github.com/frida/frida/releases)
   - `frida-server` 바이너리는 에뮬레이터 CPU 아키텍처와도 맞아야 합니다.
@@ -54,6 +63,14 @@ $env:HB_FRIDA_SERVER = 'C:\path\to\frida-server'
 ```
 
 위 경로는 예시이며 본인 PC의 실제 경로로 바꿔야 합니다.
+
+## 에뮬레이터 준비
+
+다음 명령은 필요한 SDK 패키지를 설치하고 `HoneyboardParserApi34` AVD를 생성·실행한 뒤 `adb root`와 ARM64 translation을 확인합니다. 첫 설치에는 약 7–9 GB의 여유 공간이 필요하며, 이미 호환되는 에뮬레이터가 있다면 이 단계를 생략해도 됩니다.
+
+```powershell
+.\scripts\Setup-Emulator.ps1
+```
 
 ## 사용법
 
@@ -71,10 +88,12 @@ Android Studio 등으로 호환되는 에뮬레이터를 실행한 다음, 저�
 .\scripts\Extract.ps1
 ```
 
-실행 중인 에뮬레이터가 하나면 자동으로 선택합니다. 여러 개라면 대상을 지정합니다.
+실행 중인 에뮬레이터가 하나면 자동으로 선택합니다. 여러 개라면 AVD 이름이 아니라 ADB serial을 지정합니다.
 
 ```powershell
-.\scripts\Extract.ps1 -Serial emulator-5554
+& "$env:HB_ANDROID_SDK\platform-tools\adb.exe" devices
+& "$env:HB_ANDROID_SDK\platform-tools\adb.exe" -s '<adb-serial>' emu avd name
+.\scripts\Extract.ps1 -Serial '<adb-serial>'
 ```
 
 모델의 모든 항목은 다음 형식으로 출력되고 `output/logs/`에도 저장됩니다.
