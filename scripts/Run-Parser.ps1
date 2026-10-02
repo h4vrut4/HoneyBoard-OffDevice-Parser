@@ -106,16 +106,26 @@ if ($serverVersion -ne $clientVersion) {
 & $adb -s $Serial shell am force-stop com.example.hbhost | Out-Null
 $savedErrorActionPreference = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
-$installRaw = & $adb -s $Serial install -r $hostPath 2>&1
-$installExitCode = $LASTEXITCODE
-$installOutput = @($installRaw | ForEach-Object { $_.ToString() })
-if ($installExitCode -ne 0 -and (($installOutput -join "`n") -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE')) {
-    # The package is a disposable emulator-only host. A locally generated
-    # debug key can differ when the repository is moved to another machine.
-    & $adb -s $Serial uninstall com.example.hbhost | Out-Null
-    $installRaw = & $adb -s $Serial install $hostPath 2>&1
+$installExitCode = 1
+$installOutput = @()
+for ($installAttempt = 1; $installAttempt -le 3; $installAttempt++) {
+    $installRaw = & $adb -s $Serial install -r $hostPath 2>&1
     $installExitCode = $LASTEXITCODE
     $installOutput = @($installRaw | ForEach-Object { $_.ToString() })
+    if ($installExitCode -eq 0) { break }
+
+    if (($installOutput -join "`n") -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE') {
+        # A fresh clone creates a new debug key. Remove only this disposable
+        # emulator host if its previous signature no longer matches.
+        & $adb -s $Serial uninstall com.example.hbhost 2>&1 | Out-Null
+    }
+
+    if ($installAttempt -lt 3) {
+        # sys.boot_completed can become 1 before Package Manager is fully
+        # stable, which may make the first install fail with Broken pipe.
+        Start-Sleep -Seconds 2
+        & $adb -s $Serial wait-for-device 2>&1 | Out-Null
+    }
 }
 $ErrorActionPreference = $savedErrorActionPreference
 if ($installExitCode -ne 0) {
