@@ -1,0 +1,38 @@
+# Local configuration
+config.psd1
+
+# Toolchains and virtual environments
+.tools/
+.venv/
+.venv-*/
+
+# Build and runtime output
+.work/
+output/
+artifacts/
+*.log
+*.idsig
+
+# Never commit APKs, extracted parser binaries, signing keys, or private model data
+*.apk
+*.apks
+*.xapk
+*.dex
+*.so
+*.keystore
+*.lm
+learned.json
+
+# Keep the documented input layout, but never commit its contents
+input/*
+!input/apk/
+!input/apk/.gitkeep
+!input/model/
+!input/model/.gitkeep
+
+# Editor / OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
