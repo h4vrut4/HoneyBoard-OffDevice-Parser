@@ -63,7 +63,7 @@ $env:HB_FRIDA_CLIENT = 'C:\path\to\frida.exe'
 $env:HB_FRIDA_SERVER = 'C:\path\to\frida-server'
 ```
 
-위 경로는 예시이며 본인 PC의 실제 경로로 바꿔야 합니다.
+위 경로는 예시이며 본인 PC의 실제 경로로 바꿔야 합니다. 환경변수는 현재 PowerShell 세션에만 유지되므로 반복해서 사용할 경우 `config.psd1`을 권장합니다.
 
 ## 에뮬레이터 준비
 
@@ -103,6 +103,10 @@ Android Studio 등으로 호환되는 에뮬레이터를 실행한 다음, 저�
 & "$env:HB_ANDROID_SDK\platform-tools\adb.exe" -s '<adb-serial>' emu avd name
 .\scripts\Extract.ps1 -Serial '<adb-serial>'
 ```
+
+## 실행 예시
+
+![HoneyBoard Off-Device Parser 실행 결과](./ScreenShot.png)
 
 모델의 모든 항목은 다음 형식으로 출력되고 `output/logs/`에도 저장됩니다.
 
