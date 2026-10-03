@@ -104,6 +104,12 @@ Android Studio 등으로 호환되는 에뮬레이터를 실행한 다음, 저�
 .\scripts\Extract.ps1 -Serial '<adb-serial>'
 ```
 
+결과 로그를 원하는 경로에 바로 저장하려면 `-OutputLog`를 지정합니다.
+
+```powershell
+.\scripts\Extract.ps1 -Serial '<adb-serial>' -OutputLog 'C:\path\to\parse.log'
+```
+
 ## 실행 예시
 
 ![HoneyBoard Off-Device Parser 실행 결과](./ScreenShot.png)
